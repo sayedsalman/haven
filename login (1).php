@@ -24,7 +24,7 @@ include 'includes/header.php';
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="glass-card p-4">
-            <h2 class="text-center">Login</h2>
+            <h2 class="text-center" style=justify>Login</h2>
             <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
             <form method="POST">
                 <div class="mb-3">
