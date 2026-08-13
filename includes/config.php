@@ -12,7 +12,7 @@ define('DB_PASS', '...');
 
 
 define('HASH_COST', 12);
-define('ENCRYPTION_KEY', 'your-32-char-secret-key-here');
+define('ENCRYPTION_KEY', 'sayed_mahbub_salman');
 
 
 
