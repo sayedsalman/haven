@@ -1,37 +1,27 @@
 <?php
-// ============================================================
-// Site Settings
-// ============================================================
+
 define('SITE_NAME', 'Haven');
 define('SITE_URL', 'https://salman.rfnhsc.com/mind/');
-define('SITE_EMAIL', 'support@rfnhsc.com');
+define('SITE_EMAIL', 'salman@rfnhsc.com');
 
-// ============================================================
-// Database
-// ============================================================
+
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'rfnhscco_mind');
-define('DB_USER', 'rfnhscco_mind');
-define('DB_PASS', 'LuSC6c~R[5GZE?vF');
+define('DB_NAME', 'haven');
+define('DB_USER', 'root');
+define('DB_PASS', '...');
 
-// ============================================================
-// Security
-// ============================================================
+
 define('HASH_COST', 12);
 define('ENCRYPTION_KEY', 'your-32-char-secret-key-here');
 
-// ============================================================
-// AI Configuration
-// ============================================================
-// Choose your primary provider: 'openrouter' or 'gemini'
+
 define('AI_PROVIDER', 'openrouter');
 
 // Gemini (keep for fallback or secondary use)
 define('GEMINI_API_KEY', '');
 
 // OpenRouter
-define('OPENROUTER_API_KEY', '');
-define('OPENROUTER_MODEL', 'anthropic/claude-3-haiku');
+
 // Alternative free models:
 // 'meta-llama/llama-3-8b-instruct'
 // 'microsoft/phi-3-mini-128k-instruct'
