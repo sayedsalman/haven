@@ -1,0 +1,8 @@
+
+RewriteEngine On
+
+ErrorDocument 404 /mind/404.php
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
