@@ -1,5 +1,5 @@
 <?php
-// ========== Includes & Auth ==========
+
 include 'includes/config.php';
 include 'includes/database.php';
 include 'includes/auth.php';
@@ -10,7 +10,7 @@ $admin_id = $_SESSION['user_id'];
 $tab = isset($_GET['tab']) ? $_GET['tab'] : 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-// ========== Handle Actions ==========
+
 if ($action == 'delete_user' && isset($_GET['id'])) {
     $id = intval($_GET['id']);
     if ($id != $admin_id) {
@@ -180,9 +180,7 @@ if ($action == 'export_csv' && isset($_GET['type'])) {
     exit;
 }
 
-// ========== Fetch Real Data ==========
 
-// User stats
 $total_users = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $active_users = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active = 1")->fetchColumn();
 $banned_users = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active = 0")->fetchColumn();
@@ -190,36 +188,36 @@ $volunteers = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'volunteer'")
 $moderators = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'moderator'")->fetchColumn();
 $admins = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn();
 
-// Post stats
+
 $total_posts = $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn();
 $published_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'published'")->fetchColumn();
 $flagged_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'flagged'")->fetchColumn();
 $deleted_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'deleted'")->fetchColumn();
 $today_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE DATE(created_at) = CURDATE()")->fetchColumn();
 
-// Comments
+
 $total_comments = $pdo->query("SELECT COUNT(*) FROM comments")->fetchColumn();
 
-// Reactions
+
 $total_reactions = $pdo->query("SELECT COUNT(*) FROM reactions")->fetchColumn();
 $support_count = $pdo->query("SELECT COUNT(*) FROM reactions WHERE reaction_type = 'support'")->fetchColumn();
 
-// AI stats
+
 $ai_replies = $pdo->query("SELECT COUNT(*) FROM ai_analysis")->fetchColumn();
 $high_risk_posts = $pdo->query("SELECT COUNT(*) FROM ai_analysis WHERE risk_score >= 40")->fetchColumn();
 $pending_ai_reviews = $pdo->query("SELECT COUNT(*) FROM ai_analysis WHERE risk_score BETWEEN 20 AND 39")->fetchColumn();
 
-// Reports
+
 $pending_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'pending'")->fetchColumn();
 $resolved_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'resolved'")->fetchColumn();
 $dismissed_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'dismissed'")->fetchColumn();
 
-// Volunteer stats
+
 $volunteer_requests = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'pending'")->fetchColumn();
 $active_consultations = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'active'")->fetchColumn();
 $completed_consultations = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'completed'")->fetchColumn();
 
-// Get all users for management
+
 $user_search = trim($_GET['q'] ?? '');
 if ($user_search !== '') {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username LIKE ? OR email LIKE ? OR full_name LIKE ? ORDER BY id DESC LIMIT 100");
@@ -230,10 +228,10 @@ if ($user_search !== '') {
     $users = $pdo->query("SELECT * FROM users ORDER BY id DESC LIMIT 50")->fetchAll();
 }
 
-// Get posts for management
+
 $posts = $pdo->query("SELECT p.*, u.username, u.anonymous_name FROM posts p JOIN users u ON p.user_id = u.id ORDER BY p.id DESC LIMIT 50")->fetchAll();
 
-// Get reports for moderation
+
 $reports = $pdo->query("SELECT r.*, p.title as post_title, u.username as reporter, p.user_id as post_author_id 
                         FROM reports r 
                         JOIN posts p ON r.post_id = p.id 
@@ -241,14 +239,14 @@ $reports = $pdo->query("SELECT r.*, p.title as post_title, u.username as reporte
                         WHERE r.status = 'pending' 
                         ORDER BY r.created_at DESC LIMIT 20")->fetchAll();
 
-// Get AI alerts
+
 $ai_alerts = $pdo->query("SELECT a.*, p.title, u.username FROM ai_analysis a 
                           JOIN posts p ON a.post_id = p.id 
                           JOIN users u ON p.user_id = u.id 
                           WHERE a.risk_score >= 30 
                           ORDER BY a.created_at DESC LIMIT 15")->fetchAll();
 
-// Get mood distribution for chart
+
 $mood_distribution = $pdo->query("SELECT mood, COUNT(*) as count FROM posts WHERE mood != '' GROUP BY mood")->fetchAll();
 $mood_labels = [];
 $mood_data = [];
@@ -258,7 +256,7 @@ foreach ($mood_distribution as $m) {
     $mood_data[] = $m['count'];
 }
 
-// Get daily activity for chart (last 7 days)
+
 $daily_activity = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
@@ -270,7 +268,7 @@ for ($i = 6; $i >= 0; $i--) {
     $daily_labels[] = date('M d', strtotime("-$i days"));
 }
 
-// Real user growth (last 7 days)
+
 $user_growth = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
@@ -279,7 +277,7 @@ for ($i = 6; $i >= 0; $i--) {
     $user_growth[] = (int)$stmt->fetchColumn();
 }
 
-// Real emotion distribution (from ai_analysis)
+
 $emotion_rows = $pdo->query("SELECT emotion, COUNT(*) as count FROM ai_analysis WHERE emotion IS NOT NULL AND emotion != '' GROUP BY emotion ORDER BY count DESC LIMIT 6")->fetchAll();
 $emotion_labels = [];
 $emotion_data = [];
@@ -289,7 +287,7 @@ foreach ($emotion_rows as $e) {
 }
 if (empty($emotion_labels)) { $emotion_labels = ['No data yet']; $emotion_data = [0]; }
 
-// Site settings (key => value)
+
 $settings_rows = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll();
 $site_settings = [];
 foreach ($settings_rows as $s) { $site_settings[$s['setting_key']] = $s['setting_value']; }
@@ -297,14 +295,14 @@ $get_setting = function($key, $default = '') use ($site_settings) {
     return isset($site_settings[$key]) ? $site_settings[$key] : $default;
 };
 
-// Categories for resource management
+
 $all_categories = $pdo->query("SELECT * FROM categories ORDER BY name ASC")->fetchAll();
 
-// Message handling
+
 $admin_msg = isset($_SESSION['admin_msg']) ? $_SESSION['admin_msg'] : '';
 unset($_SESSION['admin_msg']);
 
-// ========== Random Admin Tip ==========
+
 $tips = [
     'Review flagged content daily to maintain community safety.',
     'AI detected high-risk posts; consider assigning volunteers.',
@@ -320,25 +318,25 @@ $tip = $tips[array_rand($tips)];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin – Haven</title>
-    <!-- Google Fonts -->
+   
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@300..700&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5.3 -->
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- ApexCharts -->
+   
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!-- GSAP -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <!-- SweetAlert2 -->
+  
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Toastify -->
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <!-- Lenis Smooth Scroll -->
+  
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
     <style>
-        /* ===== GLOBAL ===== */
+      
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -348,7 +346,7 @@ $tip = $tips[array_rand($tips)];
         }
         h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
 
-        /* ===== Bootstrap accent override -> Haven palette ===== */
+       
         a { color: #5e7564; }
         .btn-primary { background:#5e7564; border-color:#5e7564; }
         .btn-primary:hover, .btn-primary:focus { background:#4d6555; border-color:#4d6555; }
@@ -361,7 +359,7 @@ $tip = $tips[array_rand($tips)];
         .form-control:focus, .form-select:focus { border-color:#879d8b; box-shadow:0 0 0 .2rem rgba(135,157,139,.2); }
         ::selection { background:#dfe9df; }
 
-        /* ===== DARK MODE ===== */
+        
         body.dark-mode {
             background: #f7f4ed;
             color: #26332b;
