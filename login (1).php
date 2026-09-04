@@ -28,7 +28,7 @@ include 'includes/header.php';
             <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
             <form method="POST">
                 <div class="mb-3">
-                    <label>Email</label>
+                    <label>*Email</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
                 <div class="mb-3">
@@ -37,7 +37,7 @@ include 'includes/header.php';
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
-            <p class="mt-3 text-center"><a href="forgot-password.php">Forgot password?</a> · <a href="register.php">Register</a></p>
+            <p class="mt-3 text-center"><a href="forgot-password.php">Forgot password?</a> · <a href="register.php">Create Account?</a></p>
         </div>
     </div>
 </div>
