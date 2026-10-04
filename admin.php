@@ -1,5 +1,5 @@
 <?php
-
+// ========== Includes & Auth ==========
 include 'includes/config.php';
 include 'includes/database.php';
 include 'includes/auth.php';
@@ -10,7 +10,7 @@ $admin_id = $_SESSION['user_id'];
 $tab = isset($_GET['tab']) ? $_GET['tab'] : 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-
+// ========== Handle Actions ==========
 if ($action == 'delete_user' && isset($_GET['id'])) {
     $id = intval($_GET['id']);
     if ($id != $admin_id) {
@@ -180,7 +180,9 @@ if ($action == 'export_csv' && isset($_GET['type'])) {
     exit;
 }
 
+// ========== Fetch Real Data ==========
 
+// User stats
 $total_users = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $active_users = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active = 1")->fetchColumn();
 $banned_users = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active = 0")->fetchColumn();
@@ -188,36 +190,41 @@ $volunteers = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'volunteer'")
 $moderators = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'moderator'")->fetchColumn();
 $admins = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn();
 
-
+// Post stats
 $total_posts = $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn();
 $published_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'published'")->fetchColumn();
 $flagged_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'flagged'")->fetchColumn();
 $deleted_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'deleted'")->fetchColumn();
 $today_posts = $pdo->query("SELECT COUNT(*) FROM posts WHERE DATE(created_at) = CURDATE()")->fetchColumn();
 
-
+// Comments
 $total_comments = $pdo->query("SELECT COUNT(*) FROM comments")->fetchColumn();
 
-
+// Reactions
 $total_reactions = $pdo->query("SELECT COUNT(*) FROM reactions")->fetchColumn();
 $support_count = $pdo->query("SELECT COUNT(*) FROM reactions WHERE reaction_type = 'support'")->fetchColumn();
 
-
+// AI stats
 $ai_replies = $pdo->query("SELECT COUNT(*) FROM ai_analysis")->fetchColumn();
 $high_risk_posts = $pdo->query("SELECT COUNT(*) FROM ai_analysis WHERE risk_score >= 40")->fetchColumn();
 $pending_ai_reviews = $pdo->query("SELECT COUNT(*) FROM ai_analysis WHERE risk_score BETWEEN 20 AND 39")->fetchColumn();
 
-
+// Reports
 $pending_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'pending'")->fetchColumn();
 $resolved_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'resolved'")->fetchColumn();
 $dismissed_reports = $pdo->query("SELECT COUNT(*) FROM reports WHERE status = 'dismissed'")->fetchColumn();
 
-
+// Volunteer stats
 $volunteer_requests = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'pending'")->fetchColumn();
 $active_consultations = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'active'")->fetchColumn();
 $completed_consultations = $pdo->query("SELECT COUNT(*) FROM consultation_requests WHERE status = 'completed'")->fetchColumn();
 
+// Active today (touched the app today via login or a post/comment)
+$active_today = $pdo->query("SELECT COUNT(DISTINCT id) FROM users WHERE DATE(last_login) = CURDATE()")->fetchColumn();
+$ai_today = $pdo->query("SELECT COUNT(*) FROM ai_analysis WHERE DATE(created_at) = CURDATE()")->fetchColumn();
+$reports_today = $pdo->query("SELECT COUNT(*) FROM reports WHERE DATE(created_at) = CURDATE()")->fetchColumn();
 
+// Get all users for management
 $user_search = trim($_GET['q'] ?? '');
 if ($user_search !== '') {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username LIKE ? OR email LIKE ? OR full_name LIKE ? ORDER BY id DESC LIMIT 100");
@@ -228,10 +235,10 @@ if ($user_search !== '') {
     $users = $pdo->query("SELECT * FROM users ORDER BY id DESC LIMIT 50")->fetchAll();
 }
 
-
+// Get posts for management
 $posts = $pdo->query("SELECT p.*, u.username, u.anonymous_name FROM posts p JOIN users u ON p.user_id = u.id ORDER BY p.id DESC LIMIT 50")->fetchAll();
 
-
+// Get reports for moderation
 $reports = $pdo->query("SELECT r.*, p.title as post_title, u.username as reporter, p.user_id as post_author_id 
                         FROM reports r 
                         JOIN posts p ON r.post_id = p.id 
@@ -239,14 +246,14 @@ $reports = $pdo->query("SELECT r.*, p.title as post_title, u.username as reporte
                         WHERE r.status = 'pending' 
                         ORDER BY r.created_at DESC LIMIT 20")->fetchAll();
 
-
+// Get AI alerts
 $ai_alerts = $pdo->query("SELECT a.*, p.title, u.username FROM ai_analysis a 
                           JOIN posts p ON a.post_id = p.id 
                           JOIN users u ON p.user_id = u.id 
                           WHERE a.risk_score >= 30 
                           ORDER BY a.created_at DESC LIMIT 15")->fetchAll();
 
-
+// Get mood distribution for chart
 $mood_distribution = $pdo->query("SELECT mood, COUNT(*) as count FROM posts WHERE mood != '' GROUP BY mood")->fetchAll();
 $mood_labels = [];
 $mood_data = [];
@@ -256,7 +263,7 @@ foreach ($mood_distribution as $m) {
     $mood_data[] = $m['count'];
 }
 
-
+// Get daily activity for chart (last 7 days)
 $daily_activity = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
@@ -268,7 +275,7 @@ for ($i = 6; $i >= 0; $i--) {
     $daily_labels[] = date('M d', strtotime("-$i days"));
 }
 
-
+// Real user growth (last 7 days)
 $user_growth = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
@@ -277,8 +284,17 @@ for ($i = 6; $i >= 0; $i--) {
     $user_growth[] = (int)$stmt->fetchColumn();
 }
 
-
+// Real emotion distribution (from ai_analysis)
 $emotion_rows = $pdo->query("SELECT emotion, COUNT(*) as count FROM ai_analysis WHERE emotion IS NOT NULL AND emotion != '' GROUP BY emotion ORDER BY count DESC LIMIT 6")->fetchAll();
+
+// Consultation/support request trend over the last 7 days
+$consult_trend = [];
+for ($i = 6; $i >= 0; $i--) {
+    $d = date('Y-m-d', strtotime("-$i days"));
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM consultation_requests WHERE DATE(created_at) = ?");
+    $stmt->execute([$d]);
+    $consult_trend[] = (int)$stmt->fetchColumn();
+}
 $emotion_labels = [];
 $emotion_data = [];
 foreach ($emotion_rows as $e) {
@@ -287,7 +303,39 @@ foreach ($emotion_rows as $e) {
 }
 if (empty($emotion_labels)) { $emotion_labels = ['No data yet']; $emotion_data = [0]; }
 
+// Post category distribution (what people are actually posting about)
+$category_rows = $pdo->query("SELECT COALESCE(NULLIF(category,''),'Uncategorized') as category, COUNT(*) as count FROM posts WHERE status='published' GROUP BY category ORDER BY count DESC LIMIT 8")->fetchAll();
+$category_labels = array_map(fn($r) => $r['category'], $category_rows);
+$category_data = array_map(fn($r) => (int)$r['count'], $category_rows);
+if (empty($category_labels)) { $category_labels = ['No posts yet']; $category_data = [0]; }
 
+// User role distribution
+$role_rows = $pdo->query("SELECT role, COUNT(*) as count FROM users GROUP BY role ORDER BY count DESC")->fetchAll();
+$role_labels = array_map(fn($r) => ucfirst($r['role']), $role_rows);
+$role_data = array_map(fn($r) => (int)$r['count'], $role_rows);
+
+// Reaction type breakdown (what kind of support people are giving each other)
+$reaction_rows = $pdo->query("SELECT reaction_type, COUNT(*) as count FROM reactions GROUP BY reaction_type ORDER BY count DESC")->fetchAll();
+$reaction_labels = array_map(fn($r) => ucfirst($r['reaction_type']), $reaction_rows);
+$reaction_data = array_map(fn($r) => (int)$r['count'], $reaction_rows);
+if (empty($reaction_labels)) { $reaction_labels = ['No reactions yet']; $reaction_data = [0]; }
+
+// Reports by reason (helps moderators spot patterns)
+$report_reason_rows = $pdo->query("SELECT COALESCE(NULLIF(reason,''),'Unspecified') as reason, COUNT(*) as count FROM reports GROUP BY reason ORDER BY count DESC LIMIT 8")->fetchAll();
+$report_reason_labels = array_map(fn($r) => ucwords(str_replace('_',' ',$r['reason'])), $report_reason_rows);
+$report_reason_data = array_map(fn($r) => (int)$r['count'], $report_reason_rows);
+if (empty($report_reason_labels)) { $report_reason_labels = ['No reports yet']; $report_reason_data = [0]; }
+
+// Posts per day, last 7 days (raw activity, distinct from user growth)
+$posts_per_day = [];
+for ($i = 6; $i >= 0; $i--) {
+    $d = date('Y-m-d', strtotime("-$i days"));
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM posts WHERE DATE(created_at) = ? AND status != 'deleted'");
+    $stmt->execute([$d]);
+    $posts_per_day[] = (int)$stmt->fetchColumn();
+}
+
+// Site settings (key => value)
 $settings_rows = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll();
 $site_settings = [];
 foreach ($settings_rows as $s) { $site_settings[$s['setting_key']] = $s['setting_value']; }
@@ -295,14 +343,14 @@ $get_setting = function($key, $default = '') use ($site_settings) {
     return isset($site_settings[$key]) ? $site_settings[$key] : $default;
 };
 
-
+// Categories for resource management
 $all_categories = $pdo->query("SELECT * FROM categories ORDER BY name ASC")->fetchAll();
 
-
+// Message handling
 $admin_msg = isset($_SESSION['admin_msg']) ? $_SESSION['admin_msg'] : '';
 unset($_SESSION['admin_msg']);
 
-
+// ========== Random Admin Tip ==========
 $tips = [
     'Review flagged content daily to maintain community safety.',
     'AI detected high-risk posts; consider assigning volunteers.',
@@ -318,25 +366,26 @@ $tip = $tips[array_rand($tips)];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin – Haven</title>
-   
+<link rel="icon" href="logo.png" type="image/png">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@300..700&display=swap" rel="stylesheet">
-   
+    <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-   
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-   
+    <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
+    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   
+    <!-- Toastify -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  
+    <!-- Lenis Smooth Scroll -->
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
     <style>
-      
+        /* ===== GLOBAL ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -346,7 +395,7 @@ $tip = $tips[array_rand($tips)];
         }
         h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
 
-       
+        /* ===== Bootstrap accent override -> Haven palette ===== */
         a { color: #5e7564; }
         .btn-primary { background:#5e7564; border-color:#5e7564; }
         .btn-primary:hover, .btn-primary:focus { background:#4d6555; border-color:#4d6555; }
@@ -359,7 +408,7 @@ $tip = $tips[array_rand($tips)];
         .form-control:focus, .form-select:focus { border-color:#879d8b; box-shadow:0 0 0 .2rem rgba(135,157,139,.2); }
         ::selection { background:#dfe9df; }
 
-        
+        /* ===== DARK MODE ===== */
         body.dark-mode {
             background: #f7f4ed;
             color: #26332b;
@@ -413,6 +462,13 @@ $tip = $tips[array_rand($tips)];
             z-index: 1030;
             overflow-y: auto;
             transition: transform 0.3s ease;
+            /* Forces the browser to composite this blurred, fixed layer on
+               its own GPU layer. Without this, Chrome/Safari can leave
+               scrolled content underneath rendered at reduced opacity
+               until the next repaint (e.g. a resize or refresh). */
+            transform: translateZ(0);
+            will-change: transform;
+            backface-visibility: hidden;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-thumb { background: rgba(94,117,100,0.3); border-radius: 10px; }
@@ -428,7 +484,7 @@ $tip = $tips[array_rand($tips)];
         }
         .sidebar .brand i { color: #5e7564; margin-right: 8px; }
         .sidebar .nav-link {
-            color: rgba(38,51,43,0.65);
+            color: rgba(38,51,43,0.78);
             border-radius: 12px;
             padding: 0.6rem 1rem;
             margin: 2px 8px;
@@ -470,15 +526,17 @@ $tip = $tips[array_rand($tips)];
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(64,77,67,0.06);
             transition: all 0.3s ease;
+            transform: translateZ(0);
         }
         .glass-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-3px) translateZ(0);
             box-shadow: 0 12px 40px rgba(64,77,67,0.10);
         }
         .glass-nav, .glass-footer {
             background: rgba(255,255,255,0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(94,117,100,0.3);
+            transform: translateZ(0);
         }
         .glass-footer {
             border-bottom: none;
@@ -538,7 +596,7 @@ $tip = $tips[array_rand($tips)];
 
 <!-- ========== SIDEBAR ========== -->
 <nav class="sidebar" id="sidebar">
-    <div class="brand"><i class="bi bi-heart-fill"></i> Haven</div>
+    <div class="brand"><img src="logo.png" alt="Haven" style="height:24px;width:24px;object-fit:cover;border-radius:6px;vertical-align:-5px;margin-right:6px;"> Haven</div>
     <ul class="nav flex-column mt-2">
         <li class="nav-item"><a href="?tab=dashboard" class="nav-link <?= $tab=='dashboard'?'active':'' ?>"><i class="bi bi-grid"></i> Dashboard</a></li>
         <li class="nav-item"><a href="?tab=users" class="nav-link <?= $tab=='users'?'active':'' ?>"><i class="bi bi-people"></i> Users</a></li>
@@ -559,7 +617,7 @@ $tip = $tips[array_rand($tips)];
 <nav class="navbar navbar-expand glass-nav fixed-top">
     <div class="container-fluid px-3">
         <button class="btn btn-link d-lg-none" id="sidebarToggle" style="color:inherit;"><i class="bi bi-list fs-4"></i></button>
-        <span class="navbar-brand mb-0 h6">Admin Panel</span>
+        <span class="navbar-brand mb-0 h6"><img src="logo.png" alt="Haven" style="height:20px;width:20px;object-fit:cover;border-radius:5px;vertical-align:-3px;margin-right:5px;">Admin Panel</span>
         <div class="ms-auto d-flex align-items-center gap-2">
             <span class="text-muted small d-none d-sm-block"><?= date('l, M d, Y') ?></span>
             <button class="btn btn-outline-secondary btn-sm" id="darkToggle"><i class="bi bi-moon"></i></button>
@@ -990,6 +1048,14 @@ $tip = $tips[array_rand($tips)];
             <p class="text-muted">Real-time community analytics</p>
         </div>
         <div class="row g-3 mb-3">
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($total_users) ?></h4><small class="text-muted">Users</small></div></div>
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($active_today) ?></h4><small class="text-muted">Active Today</small></div></div>
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($today_posts) ?></h4><small class="text-muted">Posts Today</small></div></div>
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($ai_today) ?></h4><small class="text-muted">AI Analyses Today</small></div></div>
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($volunteer_requests + $active_consultations) ?></h4><small class="text-muted">Support Requests</small></div></div>
+            <div class="col-6 col-md-2"><div class="glass-card p-3 text-center"><h4 class="mb-0"><?= number_format($pending_reports) ?></h4><small class="text-muted">Open Reports</small></div></div>
+        </div>
+        <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <div class="glass-card p-3">
                     <h6>Mood Distribution</h6>
@@ -1003,9 +1069,53 @@ $tip = $tips[array_rand($tips)];
                 </div>
             </div>
         </div>
-        <div class="glass-card p-3">
-            <h6>Emotion Distribution</h6>
-            <div id="emotionBar" style="height:250px;"></div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h6>Emotion Distribution</h6>
+                    <div id="emotionBar" style="height:250px;"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h6>Support Requests (Last 7 Days)</h6>
+                    <div id="consultTrend" style="height:250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h6>Posts Per Day (Last 7 Days)</h6>
+                    <div id="postsPerDay" style="height:250px;"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="glass-card p-3">
+                    <h6>What People Are Posting About</h6>
+                    <div id="categoryChart" style="height:250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="glass-card p-3">
+                    <h6>User Roles</h6>
+                    <div id="roleChart" style="height:230px;"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3">
+                    <h6>How People Support Each Other</h6>
+                    <div id="reactionChart" style="height:230px;"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3">
+                    <h6>Reports by Reason</h6>
+                    <div id="reportReasonChart" style="height:230px;"></div>
+                </div>
+            </div>
         </div>
 
     <?php elseif ($tab == 'reports'): ?>
@@ -1088,17 +1198,14 @@ $tip = $tips[array_rand($tips)];
     requestAnimationFrame(raf);
 
     // ============================================================
-    // GSAP Entrance
+    // Note: a GSAP fade-in entrance animation used to run here on every
+    // .glass-card at page load. Combined with Lenis smooth-scroll, cards
+    // further down the page (only visible after scrolling) could get
+    // stuck at a low opacity because the animation was calculated for
+    // their pre-scroll state and never properly finished. Removed —
+    // cards now just render at full opacity immediately, which is more
+    // reliable than a decorative fade that could break readability.
     // ============================================================
-    gsap.utils.toArray(".glass-card:not(.glass-nav):not(.glass-footer)").forEach((card, i) => {
-        gsap.from(card, {
-            y: 20,
-            opacity: 0,
-            duration: 0.5,
-            delay: i * 0.03,
-            ease: "power2.out"
-        });
-    });
 
     // ============================================================
     // Counter Animation
@@ -1169,7 +1276,7 @@ $tip = $tips[array_rand($tips)];
         },
         labels: ['Health']
     };
-    new ApexCharts(document.getElementById('healthGauge'), healthOptions).render();
+    if (document.getElementById('healthGauge')) { new ApexCharts(document.getElementById('healthGauge'), healthOptions).render(); }
 
     // ============================================================
     // Activity Chart (Last 7 Days)
@@ -1184,7 +1291,7 @@ $tip = $tips[array_rand($tips)];
         colors: ['#5e7564'],
         grid: { borderColor: 'rgba(64,77,67,0.04)' }
     };
-    new ApexCharts(document.getElementById('activityChart'), activityOptions).render();
+    if (document.getElementById('activityChart')) { new ApexCharts(document.getElementById('activityChart'), activityOptions).render(); }
 
     // ============================================================
     // Mood Pie Chart
@@ -1198,7 +1305,7 @@ $tip = $tips[array_rand($tips)];
         legend: { position: 'bottom', labels: { colors: '#7c857e' } },
         dataLabels: { style: { colors: ['#fffdf8'] } }
     };
-    new ApexCharts(document.getElementById('moodPie'), moodPieOptions).render();
+    if (document.getElementById('moodPie')) { new ApexCharts(document.getElementById('moodPie'), moodPieOptions).render(); }
     <?php endif; ?>
 
     // ============================================================
@@ -1212,7 +1319,7 @@ $tip = $tips[array_rand($tips)];
         colors: ['#c9a76b'],
         grid: { borderColor: 'rgba(64,77,67,0.04)' }
     };
-    new ApexCharts(document.getElementById('userGrowth'), growthOptions).render();
+    if (document.getElementById('userGrowth')) { new ApexCharts(document.getElementById('userGrowth'), growthOptions).render(); }
 
     // ============================================================
     // Emotion Bar Chart (real data from ai_analysis)
@@ -1225,7 +1332,87 @@ $tip = $tips[array_rand($tips)];
         colors: ['#5e7564'],
         grid: { borderColor: 'rgba(64,77,67,0.04)' }
     };
-    new ApexCharts(document.getElementById('emotionBar'), emotionOptions).render();
+    if (document.getElementById('emotionBar')) { new ApexCharts(document.getElementById('emotionBar'), emotionOptions).render(); }
+
+    // ============================================================
+    // Support Requests Trend
+    // ============================================================
+    var consultOptions = {
+        series: [{ name: 'Requests', data: <?= json_encode($consult_trend) ?> }],
+        chart: { type: 'area', height: 250, toolbar: { show: false }, background: 'transparent' },
+        xaxis: { categories: <?= json_encode($daily_labels) ?>, labels: { style: { colors: '#7c857e' } } },
+        yaxis: { labels: { style: { colors: '#7c857e' } } },
+        colors: ['#c96a63'],
+        fill: { opacity: 0.2 },
+        grid: { borderColor: 'rgba(64,77,67,0.04)' }
+    };
+    if (document.getElementById('consultTrend')) { new ApexCharts(document.getElementById('consultTrend'), consultOptions).render(); }
+
+    // ============================================================
+    // Posts Per Day
+    // ============================================================
+    var postsPerDayOptions = {
+        series: [{ name: 'Posts', data: <?= json_encode($posts_per_day) ?> }],
+        chart: { type: 'bar', height: 250, toolbar: { show: false }, background: 'transparent' },
+        xaxis: { categories: <?= json_encode($daily_labels) ?>, labels: { style: { colors: '#7c857e' } } },
+        yaxis: { labels: { style: { colors: '#7c857e' } } },
+        colors: ['#879d8b'],
+        grid: { borderColor: 'rgba(64,77,67,0.04)' }
+    };
+    if (document.getElementById('postsPerDay')) { new ApexCharts(document.getElementById('postsPerDay'), postsPerDayOptions).render(); }
+
+    // ============================================================
+    // Post Category Distribution
+    // ============================================================
+    var categoryOptions = {
+        series: [{ name: 'Posts', data: <?= json_encode($category_data) ?> }],
+        chart: { type: 'bar', height: 250, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+        xaxis: { categories: <?= json_encode($category_labels) ?>, labels: { style: { colors: '#7c857e' } } },
+        yaxis: { labels: { style: { colors: '#7c857e' } } },
+        colors: ['#c9a76b'],
+        grid: { borderColor: 'rgba(64,77,67,0.04)' }
+    };
+    if (document.getElementById('categoryChart')) { new ApexCharts(document.getElementById('categoryChart'), categoryOptions).render(); }
+
+    // ============================================================
+    // User Role Distribution
+    // ============================================================
+    var roleOptions = {
+        series: <?= json_encode($role_data) ?>,
+        labels: <?= json_encode($role_labels) ?>,
+        chart: { type: 'donut', height: 230, background: 'transparent' },
+        colors: ['#5e7564', '#c9a76b', '#879d8b', '#c96a63', '#8497B4'],
+        legend: { position: 'bottom', labels: { colors: '#4f5b55' } },
+        dataLabels: { enabled: true }
+    };
+    if (document.getElementById('roleChart')) { new ApexCharts(document.getElementById('roleChart'), roleOptions).render(); }
+
+    // ============================================================
+    // Reaction Type Breakdown
+    // ============================================================
+    var reactionOptions = {
+        series: <?= json_encode($reaction_data) ?>,
+        labels: <?= json_encode($reaction_labels) ?>,
+        chart: { type: 'donut', height: 230, background: 'transparent' },
+        colors: ['#c96a63', '#5e7564', '#c9a76b', '#8497B4'],
+        legend: { position: 'bottom', labels: { colors: '#4f5b55' } },
+        dataLabels: { enabled: true }
+    };
+    if (document.getElementById('reactionChart')) { new ApexCharts(document.getElementById('reactionChart'), reactionOptions).render(); }
+
+    // ============================================================
+    // Reports by Reason
+    // ============================================================
+    var reportReasonOptions = {
+        series: [{ name: 'Reports', data: <?= json_encode($report_reason_data) ?> }],
+        chart: { type: 'bar', height: 230, toolbar: { show: false }, background: 'transparent' },
+        xaxis: { categories: <?= json_encode($report_reason_labels) ?>, labels: { style: { colors: '#7c857e', fontSize: '10px' } } },
+        yaxis: { labels: { style: { colors: '#7c857e' } } },
+        colors: ['#c96a63'],
+        grid: { borderColor: 'rgba(64,77,67,0.04)' }
+    };
+    if (document.getElementById('reportReasonChart')) { new ApexCharts(document.getElementById('reportReasonChart'), reportReasonOptions).render(); }
 
     // ============================================================
     // Toast notifications for any messages

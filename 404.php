@@ -237,6 +237,7 @@ $dashboardUrl = 'dashboard.php';
             height: 42px;
 
             border-radius: 14px;
+            overflow: hidden;
 
             display: grid;
             place-items: center;
@@ -791,22 +792,7 @@ $dashboardUrl = 'dashboard.php';
 
         <div class="brand-mark">
 
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path
-                    d="M12 21s-7-4.35-9.5-9.1C.8 8.55
-                       2.55 5 6.2 5c2.05 0 3.55 1.12
-                       4.55 2.5C11.75 6.12 13.25 5
-                       15.3 5c3.65 0 5.4 3.55
-                       3.7 6.9C19 16.65 12 21 12 21Z"
-                />
-            </svg>
+            <img src="logo.png" alt="Haven" style="width:100%;height:100%;object-fit:cover;">
 
         </div>
 
