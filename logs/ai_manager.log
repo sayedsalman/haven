@@ -1,0 +1,85 @@
+2026-10-04 15:15:13 - 🚀 AIManager initialized.
+2026-10-04 15:15:13 - 📡 Using OpenRouter with model: anthropic/claude-haiku-4.5 (fallbacks: anthropic/claude-3-haiku, openai/gpt-4o-mini)
+2026-10-04 15:15:13 - 🔑 API Key present: YES
+2026-10-04 15:15:13 - 📡 Provider class: OpenRouterProvider
+2026-10-04 15:15:13 - ✅ AIManager ready.
+2026-10-04 15:15:13 - 🔍 Starting analysis for post ID: 51
+2026-10-04 15:15:13 - 📝 Post found – user_id: 14, title: 
+2026-10-04 15:15:15 - 🛡️ Shield – risk: low, score: 20
+2026-10-04 15:15:15 - 🧠 Calling MindGuide->generateReply()...
+2026-10-04 15:15:19 - 🧠 Guide – emotion: disappointed and discouraged
+2026-10-04 15:15:19 - 🧠 Guide – reply: I'm really sorry to hear about your exam result—that must feel incredibly disappointing right now....
+2026-10-04 15:15:19 - 📝 Final reply: I'm really sorry to hear about your exam result—that must feel incredibly disappointing right now....
+2026-10-04 15:15:19 - 🤖 TFLite emotion: neutral (0.6788) -> neutral
+2026-10-04 15:15:19 - 💾 Analysis saved with ID: 49
+2026-10-04 15:15:19 - 📊 Post 51 updated to published.
+2026-10-04 15:15:19 - 🤖 AI bot found with ID: 3
+2026-10-04 15:15:19 - 💬 AI comment posted (ID: 79)
+2026-10-04 15:15:19 - 📚 3 recommendations saved.
+2026-10-04 15:15:19 - 🔔 Notification sent.
+2026-10-04 15:15:19 - ✅ Analysis complete for post 51.
+2026-10-04 15:22:40 - 🚀 AIManager initialized.
+2026-10-04 15:22:40 - 📡 Using OpenRouter with model: anthropic/claude-haiku-4.5 (fallbacks: anthropic/claude-3-haiku, openai/gpt-4o-mini)
+2026-10-04 15:22:40 - 🔑 API Key present: YES
+2026-10-04 15:22:40 - 📡 Provider class: OpenRouterProvider
+2026-10-04 15:22:40 - ✅ AIManager ready.
+2026-10-04 15:22:40 - 💬 Chat from user 14
+2026-10-04 15:22:43 - ✅ Chat reply generated.
+2026-10-04 15:51:32 - 🚀 AIManager initialized.
+2026-10-04 15:51:32 - 📡 Using OpenRouter with model: anthropic/claude-haiku-4.5 (fallbacks: anthropic/claude-3-haiku, openai/gpt-4o-mini)
+2026-10-04 15:51:32 - 🔑 API Key present: YES
+2026-10-04 15:51:32 - 📡 Provider class: OpenRouterProvider
+2026-10-04 15:51:32 - ✅ AIManager ready.
+2026-10-04 15:51:32 - 🔍 Starting analysis for post ID: 52
+2026-10-04 15:51:32 - 📝 Post found – user_id: 14, title: 
+2026-10-04 15:51:34 - 🛡️ Shield – risk: critical, score: 100
+2026-10-04 15:51:34 - 📝 Final reply: I'm here for you. Please know that you are valuable. A volunteer has been notified immediately. 💚...
+2026-10-04 15:51:34 - 🤖 TFLite emotion: neutral (0.1646) -> neutral
+2026-10-04 15:51:34 - 💾 Analysis saved with ID: 50
+2026-10-04 15:51:34 - 📊 Post 52 updated to published.
+2026-10-04 15:51:34 - 🤖 AI bot found with ID: 3
+2026-10-04 15:51:34 - 💬 AI comment posted (ID: 80)
+2026-10-04 15:51:34 - 🚨 Emergency consultation created.
+2026-10-04 15:51:34 - 🔔 Notification sent.
+2026-10-04 15:51:34 - ✅ Analysis complete for post 52.
+2026-10-04 15:57:08 - 🚀 AIManager initialized.
+2026-10-04 15:57:08 - 📡 Using OpenRouter with model: anthropic/claude-haiku-4.5 (fallbacks: anthropic/claude-3-haiku, openai/gpt-4o-mini)
+2026-10-04 15:57:08 - 🔑 API Key present: YES
+2026-10-04 15:57:08 - 📡 Provider class: OpenRouterProvider
+2026-10-04 15:57:08 - ✅ AIManager ready.
+2026-10-04 15:57:08 - 🔍 Starting analysis for post ID: 53
+2026-10-04 15:57:08 - 📝 Post found – user_id: 7, title: 
+2026-10-04 15:57:10 - ❌ Image description failed: All models failed → anthropic/claude-haiku-4.5: HTTP 400 – Invalid URL format: uploads/community/cm_6ac222f43f3aa.png (code 400) | anthropic/claude-3-haiku: HTTP 404 – Claude 3 Haiku was deprecated on Sep 10, 2026. We recommend migrating to Claude Haiku 4.5 (openrouter.ai/anthropic/claude-haiku-4.5). (code 404) | openai/gpt-4o-mini: HTTP 400 – Provider returned error (code 400)
+2026-10-04 15:57:11 - 🛡️ Shield – risk: low, score: 20
+2026-10-04 15:57:11 - 🧠 Calling MindGuide->generateReply()...
+2026-10-04 15:57:14 - 🧠 Guide – emotion: unwell
+2026-10-04 15:57:14 - 🧠 Guide – reply: I'm sorry you're feeling sick right now. That can be really difficult and draining. I'm here to list...
+2026-10-04 15:57:14 - 📝 Final reply: I'm sorry you're feeling sick right now. That can be really difficult and draining. I'm here to list...
+2026-10-04 15:57:14 - 🤖 TFLite emotion: sadness (0.4323) -> sad
+2026-10-04 15:57:14 - 💾 Analysis saved with ID: 51
+2026-10-04 15:57:14 - 📊 Post 53 updated to published.
+2026-10-04 15:57:14 - 🤖 AI bot found with ID: 3
+2026-10-04 15:57:14 - 💬 AI comment posted (ID: 81)
+2026-10-04 15:57:14 - 📚 2 recommendations saved.
+2026-10-04 15:57:14 - 🔔 Notification sent.
+2026-10-04 15:57:14 - ✅ Analysis complete for post 53.
+2026-10-25 15:20:11 - 🚀 AIManager initialized.
+2026-10-25 15:20:11 - 📡 Using OpenRouter with model: anthropic/claude-haiku-4.5 (fallbacks: anthropic/claude-3-haiku, openai/gpt-4o-mini)
+2026-10-25 15:20:11 - 🔑 API Key present: YES
+2026-10-25 15:20:11 - 📡 Provider class: OpenRouterProvider
+2026-10-25 15:20:11 - ✅ AIManager ready.
+2026-10-25 15:20:11 - 🔍 Starting analysis for post ID: 55
+2026-10-25 15:20:11 - 📝 Post found – user_id: 2, title: i am si
+2026-10-25 15:20:13 - 🛡️ Shield – risk: low, score: 20
+2026-10-25 15:20:13 - 🧠 Calling MindGuide->generateReply()...
+2026-10-25 15:20:17 - 🧠 Guide – emotion: uncertain
+2026-10-25 15:20:17 - 🧠 Guide – reply: Hello, I'm here to listen and support you. It seems your message got cut off—I see 'i am si'. Coul...
+2026-10-25 15:20:17 - 📝 Final reply: Hello, I'm here to listen and support you. It seems your message got cut off—I see 'i am si'. Coul...
+2026-10-25 15:20:17 - 🤖 TFLite emotion: neutral (0.3898) -> neutral
+2026-10-25 15:20:17 - 💾 Analysis saved with ID: 53
+2026-10-25 15:20:17 - 📊 Post 55 updated to published.
+2026-10-25 15:20:17 - 🤖 AI bot found with ID: 3
+2026-10-25 15:20:17 - 💬 AI comment posted (ID: 83)
+2026-10-25 15:20:17 - 📚 2 recommendations saved.
+2026-10-25 15:20:17 - 🔔 Notification sent.
+2026-10-25 15:20:17 - ✅ Analysis complete for post 55.
