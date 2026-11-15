@@ -1,0 +1,4 @@
+/* Admin specific tweaks */
+.admin-stats .glass-card { transition: all 0.3s; }
+.admin-stats .glass-card:hover { transform: scale(1.02); }
+.table { background: rgba(255,255,255,0.5); border-radius: 15px; overflow: hidden; }
