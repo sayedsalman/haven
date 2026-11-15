@@ -1,0 +1,41 @@
+2026-10-04 15:15:13 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:15:15 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1791105313-dNYrPSO16ne0fKH7sktU","object":"chat.completion","created":1791105313,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"risk_level\": \"low\",\n  \"c
+2026-10-04 15:15:15 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:15:19 - 📥 HTTP 200 | body: 
+         
+
+         
+{"id":"gen-1791105315-QUBizKIGednYElPG20rX","object":"chat.completion","created":1791105315,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"reply\": \"I'm rea
+2026-10-04 15:22:40 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:22:43 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1791105760-uDVJrPKJiJxhVuoKD8eI","object":"chat.completion","created":1791105760,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"reply\": \"Hi there! 👋 I'm
+2026-10-04 15:51:32 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:51:34 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1791107492-U8tFSWOG79bYnpm5zz9v","object":"chat.completion","created":1791107492,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"risk_level\": \"critical\",\n
+2026-10-04 15:57:08 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:57:08 - 📥 HTTP 400 | body: {"error":{"message":"Invalid URL format: uploads/community/cm_6ac222f43f3aa.png","code":400,"metadata":{"provider_name":null}}}
+2026-10-04 15:57:08 - 📤 Model: anthropic/claude-3-haiku (attempt 1)
+2026-10-04 15:57:09 - 📥 HTTP 404 | body: {"error":{"message":"Claude 3 Haiku was deprecated on Sep 10, 2026. We recommend migrating to Claude Haiku 4.5 (openrouter.ai/anthropic/claude-haiku-4.5).","code":404},"user_id":"user_3HVYVDxPL5BTQ8rnsg0iVW6NDqH"}
+2026-10-04 15:57:09 - 📤 Model: openai/gpt-4o-mini (attempt 1)
+2026-10-04 15:57:10 - 📥 HTTP 400 | body: {"error":{"message":"Provider returned error","code":400,"metadata":{"raw":"{\n  \"error\": {\n    \"message\": \"Failed to download file. File URL is invalid.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": null,\n    \"code\": \"invalid_image_url\"\n  }\n}","provider_name":"OpenAI","is_byok":false,"provider_error_code":"invalid_image_url","previous_errors":[{"code":400,"message":"Pr
+2026-10-04 15:57:10 - ❌ All models failed → anthropic/claude-haiku-4.5: HTTP 400 – Invalid URL format: uploads/community/cm_6ac222f43f3aa.png (code 400) | anthropic/claude-3-haiku: HTTP 404 – Claude 3 Haiku was deprecated on Sep 10, 2026. We recommend migrating to Claude Haiku 4.5 (openrouter.ai/anthropic/claude-haiku-4.5). (code 404) | openai/gpt-4o-mini: HTTP 400 – Provider returned error (code 400)
+2026-10-04 15:57:10 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:57:11 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1791107830-biSwifFmmElGRsekq4HR","object":"chat.completion","created":1791107830,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"risk_level\": \"low\",\n  \"c
+2026-10-04 15:57:11 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-04 15:57:14 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1791107831-zfttkFZ56fiitNzzhD53","object":"chat.completion","created":1791107831,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"reply\": \"I'm sorry you're f
+2026-10-25 15:20:11 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-25 15:20:13 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1792920011-Ieyugxs3M9aS1I8mUkMa","object":"chat.completion","created":1792920011,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"risk_level\": \"low\",\n  \"c
+2026-10-25 15:20:13 - 📤 Model: anthropic/claude-haiku-4.5 (attempt 1)
+2026-10-25 15:20:17 - 📥 HTTP 200 | body: 
+         
+{"id":"gen-1792920014-PKNlMJFqSjyIxyPemFQj","object":"chat.completion","created":1792920014,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","system_fingerprint":null,"service_tier":"default","choices":[{"index":0,"logprobs":null,"finish_reason":"stop","native_finish_reason":"end_turn","message":{"role":"assistant","content":"```json\n{\n  \"reply\": \"Hello, I'm here to
